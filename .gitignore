@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 벤치마크 실행 결과 (정리한 결과만 bench/results/ 에 커밋)
+bench/results.json
+bench/results.csv
+bench/frame_*.png
