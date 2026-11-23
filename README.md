@@ -121,8 +121,11 @@ gantt
 python3 -m unittest discover tests      # 하드웨어 없이 실행 가능
 python3 tools/check_loop.py             # 고정 틱 루프 : 렌더 0~100ms에서 로직 60틱/초 유지 확인
 python3 tools/check_display.py          # 디스플레이 : 전체 화면 전송 FPS, 합성/변환/전송 시간 (본넷 필요)
+python3 tools/check_input.py            # 입력 : 화면에 누른 버튼·방향·횟수 표시 (CENTER 3초 = 종료)
 ```
 
 `pifighter/engine/loop.py` 의 `FixedTickLoop` 은 판정 로직을 별도 스레드에서 60Hz 마감 시각에 맞춰 실행하고, 화면은 가장 최신 틱의 스냅샷만 그린다(렌더 스킵). Pi 5 실측(2026-11-23) : 실제 64MHz numpy 전체 화면 전송과 함께 돌렸을 때 화면 47.0FPS, 로직 60.00틱/초, 틱 지연 p99 0.12ms. 단일 스레드 누적 방식(`mode="accum"`)은 틱 수는 같지만 틱 지연 p99가 21.4ms로 한 틱보다 커서 기본값으로 쓰지 않는다. 가짜 렌더 측정 원본 : [`bench/results/loop_check_2026-11-23.csv`](bench/results/loop_check_2026-11-23.csv)
 
 `pifighter/display.py` 의 `Display` 는 SPI 64MHz로 본넷을 열고 numpy로 만든 RGB565 바이트를 바로 전송한다(180도 회전은 numpy 뒤집기로 처리, `blit()` 으로 부분 전송 가능). `pifighter/render.py` 의 `FrameComposer` 는 배경 → 캐릭터 → 이펙트 → UI 순서로 한 장을 합성한다. Pi 5 실측(2026-11-23) : 전체 화면 45.3FPS (합성 0.55ms, 변환 1.13ms, 전송 20.2ms), 60Hz 루프 안에서 44.9FPS + 로직 60.0틱/초. 원본 : [`bench/results/display_check_2026-11-23.csv`](bench/results/display_check_2026-11-23.csv)
+
+`pifighter/input.py` 의 `InputReader` 는 매 틱 조이스틱·A/B를 읽어 누른 순간(`pressed`)·누르는 중(`held`)·뗀 순간(`released`)을 나누고, 두 방향 동시 입력은 대각선(숫자패드 1~9), 좌+우·상+하는 중립으로 처리한다. `debounce_ticks` 로 떨림 필터 길이를 정한다(기본 1틱). Pi 5 실기 확인(2026-11-23) : 4방향·대각선 정상, A 빠른 연타 중 가장 짧은 입력도 3틱(약 50ms)이라 틱 샘플링으로 씹힘 없음, poll 0.07ms/틱. 조이스틱 가운데를 누르면 방향 접점도 같이 눌리는 경우가 있어 CENTER는 게임 조작에 쓰지 않는다.
