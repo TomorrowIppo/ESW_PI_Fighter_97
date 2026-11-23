@@ -1,0 +1,3 @@
+stage,fps,compose_ms,convert_ms,send_ms,tick_hz,tick_late_p99_ms
+full_max,45.3,0.55,1.13,20.22,,
+full_in_60hz_loop,44.9,0.55,1.21,20.3,60.0,0.13
