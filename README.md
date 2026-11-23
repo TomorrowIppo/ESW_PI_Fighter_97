@@ -114,3 +114,12 @@ gantt
 
 - [프로젝트 제안서](docs/proposal.md)
 - [FPS 벤치마크](bench/README.md)
+
+## 엔진 검증
+
+```bash
+python3 -m unittest discover tests      # 하드웨어 없이 실행 가능
+python3 tools/check_loop.py             # 고정 틱 루프 : 렌더 0~100ms에서 로직 60틱/초 유지 확인
+```
+
+`pifighter/engine/loop.py` 의 `FixedTickLoop` 은 판정 로직을 별도 스레드에서 60Hz 마감 시각에 맞춰 실행하고, 화면은 가장 최신 틱의 스냅샷만 그린다(렌더 스킵). Pi 5 실측(2026-11-23) : 실제 64MHz numpy 전체 화면 전송과 함께 돌렸을 때 화면 47.0FPS, 로직 60.00틱/초, 틱 지연 p99 0.12ms. 단일 스레드 누적 방식(`mode="accum"`)은 틱 수는 같지만 틱 지연 p99가 21.4ms로 한 틱보다 커서 기본값으로 쓰지 않는다. 가짜 렌더 측정 원본 : [`bench/results/loop_check_2026-11-23.csv`](bench/results/loop_check_2026-11-23.csv)

@@ -1,0 +1,6 @@
+case,mode,secs,ticks,tick_hz,frames,fps,skipped_ticks,dropped_ticks,tick_late_p50_ms,tick_late_p99_ms,tick_late_max_ms,render_ms_avg
+render_0ms,thread,5.02,301,60.0,301,60.0,0,0,0.06,0.06,0.16,0.05
+render_22ms(~45fps),thread,5.02,301,60.0,228,45.4,73,0,0.06,4.05,4.12,22.06
+render_50ms(~20fps),thread,5.02,301,60.0,101,20.1,200,0,0.05,0.06,0.12,50.06
+render_100ms(~10fps),thread,5.02,301,59.94,51,10.2,250,0,0.05,5.12,5.12,100.06
+render_jitter_5-80ms,thread,5.02,301,60.0,163,32.5,138,0,0.06,5.12,5.12,29.29
